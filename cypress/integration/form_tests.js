@@ -1,65 +1,102 @@
 describe('Tests form for Error messages and successful submition', function() {
-    it('Ensures submit button is disabled if inadequate data is provided.  Ensure form submision with adequate data succeeds', function() {
-        cy.visit('http://localhost:3000/')
 
-        cy.get('#name')
-            .type('a')
-            .clear()
+        beforeEach(() => { //Before each test run this.
+            cy.visit('http://localhost:3000/');
+        });
 
-        cy.contains('Name field is required.')
+        const nameInput = () => cy.get('input[name="name"]');
+        const emailInput = () => cy.get('input[name="email"]');
+        const passwordInput = () => cy.get('input[name="password"]');
+        const termsOfServiceInput = () => cy.get('input[name="termsOfService"]');
+        const submitBtn = () => cy.contains('Submit');
 
-        cy.contains('Submit')
-            .should('be.disabled')
+        it('sanity test ensure cypress is working', () => {
+            expect(1 + 2).to.equal(3);
+            expect(2 + 2).not.to.equal(5);
+        })
 
-        cy.get('#name')
-            .type('FakeName')
+        it('Checks that input fields are empty on page load', function() {
+            submitBtn()
+                .should('be.disabled')
 
-        cy.get('#email')
-            .type('a')
-            .clear()
+            nameInput()
+                .should('have.value', "");
 
-        cy.contains('Email field is required.')
+            emailInput()
+                .should('have.value', "")
 
-        cy.contains('Submit')
-            .should('be.disabled')
-
-        cy.get('#email')
-            .type('dummyemail@email.com')
-
-        cy.get('#password')
-            .type('a')
-            .clear()
+            passwordInput()
+                .should('have.value', "");
             
-        cy.contains('Password field is required')
+            termsOfServiceInput()
+                .should('have.value', 'false')
+        })
 
-        cy.get('#password')
-            .type('fake')
-        
-        cy.contains('Password must be at least 6 characters.')
+        it('Ensures submit button is disabled if inadequate data is provided.  Ensure form submision with adequate data succeeds', function() {
 
-        cy.contains('Submit')
-            .should('be.disabled')
+            cy.contains("My name is FakeName. My email is dummyemail@email.com my password is: fakepassword.").should("not.exist")
 
-        cy.get('#password')
-            .clear()
-            .type('fakepassword')
-        
-        cy.contains('Submit')
-            .should('be.disabled')
+            submitBtn()
+                .should('be.disabled')
 
-        cy.get('#termsOfService')
-            .dblclick()
+            nameInput()
+                .type('a')
+                .clear()
 
-        cy.contains('You must agree to Terms of Service')
+            cy.contains('Name field is required.')
 
-        cy.get('#termsOfService')
-            .click()
+            submitBtn()
+                .should('be.disabled')
 
-        cy.contains('Submit')
-            .should('be.enabled')
-            .click()
+            nameInput()
+                .type('FakeName')
 
-        cy.contains('My name is FakeName. My email is dummyemail@email.com my password is: fakepassword.')
+            emailInput()
+                .type('a')
+                .clear()
+
+            cy.contains('Email field is required.')
+
+            submitBtn()
+                .should('be.disabled')
+
+            emailInput()
+                .type('dummyemail@email.com')
+
+            passwordInput()
+                .type('a')
+                .clear()
+                
+            cy.contains('Password field is required')
+
+            passwordInput()
+                .type('fake')
+            
+            cy.contains('Password must be at least 6 characters.')
+
+            submitBtn()
+                .should('be.disabled')
+
+            passwordInput()
+                .clear()
+                .type('fakepassword')
+            
+            submitBtn()
+                .should('be.disabled')
+
+            termsOfServiceInput()
+                .dblclick()
+
+            cy.contains('You must agree to Terms of Service')
+
+            termsOfServiceInput()
+                .click()
+
+            submitBtn()
+                .should('be.enabled')
+                .click()
+
+            cy.contains('My name is FakeName. My email is dummyemail@email.com my password is: fakepassword.')
 
     })
 })
